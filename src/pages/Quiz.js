@@ -1,10 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { quiz as quizData } from "../components/quiz/fakeData";
+import { useTimer } from "react-timer-hook";
 
 const Quiz = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quiz, setQuiz] = useState(quizData);
   const { id, question, options } = quiz[currentIndex];
+
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + 600); // 10 minutes timer
+
+  const { seconds, minutes, hours, start } = useTimer({
+    time,
+    onExpire: () => alert("timer up"),
+  });
+
+  useEffect(() => {
+    start();
+  });
 
   const nextQuestion = () => {
     if (quiz.length - 1 === currentIndex) return;
@@ -36,7 +49,9 @@ const Quiz = () => {
 
   return (
     <div>
-      <h2 className="text-center mb-3 mt-3">Quiz Screen</h2>
+      <h2 className="text-center mb-3 mt-3">
+        Quiz Screen - Time: {hours}:{minutes}:{seconds}
+      </h2>
       <div className="card">
         <div
           className="card-body"
