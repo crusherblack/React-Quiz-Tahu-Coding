@@ -1,23 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { quiz as quizData } from "../components/quiz/fakeData";
 import { useTimer } from "react-timer-hook";
+import { useHistory, Link } from "react-router-dom";
+
+import { quiz as quizData } from "../components/quiz/fakeData";
 
 const Quiz = () => {
+  const history = useHistory();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quiz, setQuiz] = useState(quizData);
   const { id, question, options } = quiz[currentIndex];
+  const [score, setScore] = useState({
+    correct: 0,
+    false: 0,
+  });
 
-  const time = new Date();
-  time.setSeconds(time.getSeconds() + 600); // 10 minutes timer
+  const expiryTimestamp = new Date();
+  const MINUTES = 120;
+  const SECONDS = MINUTES * 60;
+  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + SECONDS);
 
-  const { seconds, minutes, hours, start } = useTimer({
-    time,
-    onExpire: () => alert("timer up"),
+  const { seconds, minutes, hours } = useTimer({
+    expiryTimestamp,
+    onExpire: () => history.push("/"),
   });
 
   useEffect(() => {
-    start();
-  });
+    checkScore();
+  }, [quiz]);
+
+  const checkScore = () => {
+    const questionAnswared = quiz.filter((item) => item.selected);
+    const questionCorrect = questionAnswared.filter((item) =>
+      item.options.find(
+        (option) => option.correct && option.selected === option.correct
+      )
+    );
+    setScore({
+      correct: questionCorrect.length,
+      false: quiz.length - questionCorrect.length,
+    });
+  };
 
   const nextQuestion = () => {
     if (quiz.length - 1 === currentIndex) return;
@@ -49,10 +71,11 @@ const Quiz = () => {
 
   return (
     <div>
-      <h2 className="text-center mb-3 mt-3">
-        Quiz Screen - Time: {hours}:{minutes}:{seconds}
+      <h2 className="text-center mb-3 mt-3" onClick={() => checkScore()}>
+        Quiz Screen, Score: {score.correct} - {score.false} - Time: {hours}:
+        {minutes}:{seconds}
       </h2>
-      <div className="card">
+      <div className="card mb-3">
         <div
           className="card-body"
           style={{
@@ -63,6 +86,7 @@ const Quiz = () => {
         >
           {quiz.map((item, index) => (
             <div
+              key={index}
               className="border border-primary font-weight-bold"
               style={{
                 display: "flex",
@@ -138,13 +162,27 @@ const Quiz = () => {
         >
           Previous
         </button>
-        <button
-          className="btn btn-primary col-sm-2"
-          onClick={() => nextQuestion()}
-          disabled={quiz.length - 1 === currentIndex ? true : false}
-        >
-          Next
-        </button>
+        {quiz.length - 1 !== currentIndex ? (
+          <button
+            className="btn btn-primary col-sm-2"
+            onClick={() => nextQuestion()}
+          >
+            Next
+          </button>
+        ) : (
+          <Link
+            className="btn btn-success col-sm-2"
+            to={{
+              pathname: "recap",
+              state: {
+                quiz,
+                score,
+              },
+            }}
+          >
+            Finish
+          </Link>
+        )}
       </div>
     </div>
   );
