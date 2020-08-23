@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useTimer } from "react-timer-hook";
+import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import { quiz as quizData } from "../components/quiz/fakeData";
 
 const Quiz = () => {
+  const history = useHistory();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quiz, setQuiz] = useState(quizData);
   const [score, setScore] = useState({
@@ -19,7 +22,7 @@ const Quiz = () => {
 
   const { seconds, minutes, hours } = useTimer({
     expiryTimestamp: time,
-    onExpire: () => alert("time up"),
+    onExpire: () => setCurrentIndex(quiz.length - 1),
   });
 
   const checkScore = () => {
@@ -153,31 +156,32 @@ const Quiz = () => {
           paddingTop: 10,
         }}
       >
-        {!quiz.length - 1 === currentIndex ? (
-          true
-        ) : false ? (
-          <>
-            <button
-              className="btn btn-info col-sm-2"
-              onClick={() => previousQuestion()}
-              disabled={currentIndex === 0 ? true : false}
-            >
-              Previous
-            </button>
-            <button
-              className="btn btn-primary col-sm-2"
-              onClick={() => nextQuestion()}
-              disabled={quiz.length - 1 === currentIndex ? true : false}
-            >
-              Next
-            </button>
-          </>
-        ) : (
-          <button
+        <button
+          className="btn btn-info col-sm-2"
+          onClick={() => previousQuestion()}
+          disabled={currentIndex === 0 ? true : false}
+        >
+          Previous
+        </button>
+        {quiz.length - 1 === currentIndex ? (
+          <Link
             className="btn btn-success col-sm-2"
-            onClick={() => nextQuestion()}
+            to={{
+              pathname: "/summary",
+              state: {
+                quiz,
+                score,
+              },
+            }}
           >
             Finish
+          </Link>
+        ) : (
+          <button
+            className="btn btn-primary col-sm-2"
+            onClick={() => nextQuestion()}
+          >
+            Next
           </button>
         )}
       </div>

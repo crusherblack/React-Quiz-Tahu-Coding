@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Crud from "./pages/Crud";
 import About from "./pages/About";
 import Quiz from "./pages/Quiz";
+import QuizSummary from "./pages/QuizSummary";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
@@ -22,6 +23,7 @@ const App = () => {
           <Route exact path="/crud" component={Crud} />
           <Route exact path="/about" component={About} />
           <Route exact path="/quiz" component={Quiz} />
+          <Route exact path="/summary" component={QuizSummary} />
         </Switch>
       </div>
     </Router>
