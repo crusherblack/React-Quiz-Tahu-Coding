@@ -23,7 +23,7 @@ const App = () => {
           <Route exact path="/crud" component={Crud} />
           <Route exact path="/about" component={About} />
           <Route exact path="/quiz" component={Quiz} />
-          <Route exact path="/summary" component={QuizSummary} />
+          <Route exact path="/summary" component={Quiz} />
         </Switch>
       </div>
     </Router>
