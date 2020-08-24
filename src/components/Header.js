@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 const Header = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a className="navbar-brand" href="#">
-        Tahu Coding React
-      </a>
+      <Link className="navbar-brand" to="/">
+        React Quiz Tahu Coding
+      </Link>
       <button
         className="navbar-toggler"
         type="button"
